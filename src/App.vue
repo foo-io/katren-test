@@ -1,32 +1,59 @@
-<template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+<template lang="pug">
+  #app
+    .container
+      .page
+        .page__title
+          h1.page__title-text Weather
+        .page__output
+          pre Current city: {{ $store.getters.getCurrent }}
+
+        .page__body
+          .page__sidebar
+            CCities
+          .page__content
+            router-view
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import HelloWorld from '@/components/HelloWorld.vue'
+import CCities from "@/components/c-cities";
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+export default {
+  name: 'App',
+  components: {
+    CCities,
+    HelloWorld
   }
 }
+
+</script>
+
+<style lang="sass">
+#app
+  font-family: Avenir, Helvetica, Arial, sans-serif
+
+.container
+  max-width: 1000px
+  margin: 0 auto
+
+.page
+  display: flex
+  flex-direction: column
+
+  &__title
+    display: flex
+    justify-content: center
+
+    &-text
+
+  &__body
+    display: flex
+
+  &__sidebar
+    display: flex
+    width: 30%
+
+  &__content
+    display: flex
+    width: 70%
 </style>
