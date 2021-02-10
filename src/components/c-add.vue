@@ -1,12 +1,25 @@
 <template lang="pug">
 .city__add
   p(v-if="error") {{ error }}
-  input(v-model="inputCity" placeholder="Enter city...")
-  button(@click="addNewCity") Add city
-
+  Autocomplete(
+    :search="search"
+    placeholder="Enter city..."
+    aria-label="Enter city..."
+    :get-result-value="getResultValue"
+    @submit="addNewCity"
+    ref="autocomplete"
+    )
+  //input(v-model="inputCity" placeholder="Enter city...")
+  //button(@click="addNewCity") Add city
+  //button(@click="resetCities()") Reset
 </template>
 
 <script>
+import Autocomplete from '@trevoreyre/autocomplete-vue'
+import '@trevoreyre/autocomplete-vue/dist/style.css'
+
+const API_KEY = 'c685ce0d903c4fb6872171136211002'
+
 export default {
   name: "c-add",
   data() {
@@ -15,24 +28,46 @@ export default {
       error: ''
     }
   },
+  components: {
+    Autocomplete
+  },
   methods: {
-    addNewCity() {
-      if (this.inputCity.length > 0) {
-        this.error = ''
+    addNewCity(cityObject) {
+      this.error = ''
 
-        // TODO: checkin -> существует ли такой город
-        this.$store.dispatch('addNewCity', this.inputCity) // собственно после проверки конечно что такой город существует!!!
-        this.$router.push(`/${this.inputCity}`)
-        this.inputCity = ''
-      } else {
-        this.error = 'Please, enter the name of the city!'
+      this.$store.dispatch('addNewCity', cityObject) // собственно после проверки конечно что такой город существует!!!
+      if (this.$route.params.city !== cityObject.url) {
+        this.$router.push(`/${cityObject.url}`)
       }
+      this.$refs.autocomplete.value = ''
+    },
+    resetCities() {
+      this.$store.dispatch('resetCities')
+      this.$router.push('/moscow')
+    },
+    search(input) {
+      const url = `http://api.weatherapi.com/v1/search.json?key=${API_KEY}&q=${encodeURI(input)}&limit=1`
+
+      return new Promise(resolve => {
+        if (input.length < 3) {
+          return resolve([])
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+              resolve(data)
+            })
+      })
+    },
+    getResultValue(result) {
+      return result.name
     }
   }
 
 }
 </script>
 
-<style scoped>
+<style lang="sass" scoped>
 
 </style>

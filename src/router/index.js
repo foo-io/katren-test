@@ -12,6 +12,7 @@ const routes = [
   },
   {
     path: '/:city',
+    props: { obj: null },
     component: Weather
   }
 ]
