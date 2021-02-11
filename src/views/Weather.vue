@@ -1,26 +1,31 @@
 <template lang="pug">
   .content(v-if="errors.length === 0")
     h3.content__title {{ current.name }}
-    .weather
+    .weather(v-if="weather.length > 0")
       .weather__item(v-for="item in weather")
         .weather__item-key {{ item.formatedDate }}
-        .weather__item-value {{ item.avgTemp + '°C, ' +  item.condition }}
-
+        .weather__item-value
+          span.color-green {{ item.avgTemp + '°C'}}
+          span(class="show-desktop" style="margin-right: 6px;") ,
+          span {{ item.condition }}
+    .loading(v-else)
+      c-loader(name="weather")
     .map
       TGisMap(
         :center="[current.lat, current.lon]"
         :styles="{height: '200px'}"
         :zoom="10")
 
-  .errors(v-else)
-    ul
-      li(v-for="error in errors")
-        p {{ error }}
+  .error(v-else)
+    .error__icon 😔
+    // в основном всегда только одна ошибка показывается...
+    h3.error__title {{ errors[0] }}
 </template>
 
 <script>
 import moment from "moment"
 import TGisMap from "@/components/c-map"
+import CLoader from "@/components/c-loader"
 
 moment.defineLocale('en', null)
 moment.locale('en', {
@@ -60,18 +65,13 @@ export default {
   },
   methods: {
     getCurrentObject(search = this.$route.params.city) {
-      let array = this.cities
-      let obj = array.find(obj => obj.url === search)
-
-      return obj;
+      return this.cities.find(obj => obj.url === search);
     },
     checkin() {
       this.errors = []
 
       if (!this.getCurrentObject() && this.$route.params.city) {
         this.errors.push(`City "${this.$route.params.city}" not found in the list of cities!`)
-      } else {
-        this.$store.dispatch('changeCity', this.getCurrentObject())
       }
     },
     async getWeather(city) {
@@ -139,12 +139,9 @@ export default {
     cities() {
       this.checkin()
     },
-    current() {
-      this.checkin()
-    },
   },
   components: {
-    TGisMap
+    TGisMap, CLoader
   }
 }
 </script>
@@ -157,10 +154,16 @@ export default {
   flex-direction: column
   width: 100%
   margin-left: 16px
+
   &__title
     font-weight: 600
     color: $h3-title
     margin: 16px 0 32px
+    @media screen and (max-width: $mobile-width)
+      margin: 16px 0
+      font-size: 16px
+  @media screen and (max-width: $tablet-width)
+    margin-left: 0
 
 .weather
   &__item
@@ -172,15 +175,43 @@ export default {
     &-key
       display: flex
       justify-content: flex-end
+      text-align: right
       width: 50%
       margin-right: 8px
     &-value
       display: flex
       width: 50%
       margin-left: 8px
+      @media screen and (max-width: $tablet-width)
+        flex-direction: column
+    @media screen and (max-width: $mobile-width)
+      font-size: 14px
 
 .map
   border-radius: 10px
   overflow: hidden
   margin-top: 32px
+
+.color-green
+  color: $temp-color
+  font-weight: 600
+  @media screen and (max-width: $tablet-width)
+    font-size: 16px
+
+.error
+  display: flex
+  flex-direction: column
+  width: 100%
+  align-items: center
+  justify-content: center
+  margin-top: 16px
+  margin-left: 16px
+
+  &__icon
+    font-size: 5rem
+  &__title
+    text-align: center
+
+  @media screen and (max-width: $tablet-width)
+    margin-left: 0
 </style>

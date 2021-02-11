@@ -20,7 +20,9 @@ export default new Vuex.Store({
       { "id": 3247379, "name": "Mexico City, The Federal District, Mexico", "region": "The Federal District", "country": "Mexico", "lat": 19.43, "lon": -99.13, "url": "mexico-city-the-federal-district-mexico" },
       { "id": 2179091, "name": "Rostov-On-Don, Rostov, Russia", "region": "Rostov", "country": "Russia", "lat": 47.24, "lon": 39.71, "url": "rostov-on-don-rostov-russia" },
       { "id": null, "name": "Undefined City", "region": "null", "country": "null", "lat": 0, "lon": 0, "url": "undefined" }
-    ]
+    ],
+    menu: false,
+    isMobile: false
   },
   mutations: {
     setCurrent: (state, city) => state.current = city,
@@ -38,6 +40,12 @@ export default new Vuex.Store({
       localStorage.setItem('appCities', JSON.stringify(state.default))
       state.cities = JSON.parse(localStorage.getItem('appCities'))
     },
+    reverseMenu: state => {
+      state.menu = !state.menu
+    },
+    isMobile: (state, status) => {
+      state.isMobile = status
+    },
   },
   actions: {
     changeCity: (ctx, city) => {
@@ -49,10 +57,18 @@ export default new Vuex.Store({
     resetCities: ctx => {
       ctx.commit('resetCities')
     },
+    reverseMenu: ctx => {
+      ctx.commit('reverseMenu')
+    },
+    isMobile: (ctx, status) => {
+      ctx.commit('isMobile', status)
+    }
   },
   getters: {
     getCurrent: state => state.current,
     getCities: state => state.cities,
     getDefault: state => state.default,
+    getMenuStatus: state => state.menu,
+    getMobileStatus: state => state.isMobile,
   },
 })

@@ -22,6 +22,11 @@ export default {
       return this.$store.getters.getCities;
     }
   },
+  watch: {
+    $route() {
+      this.$store.dispatch('reverseMenu')
+    }
+  }
 }
 </script>
 
@@ -35,6 +40,8 @@ export default {
     font-weight: 600
     color: $h3-title
     margin: 16px 0
+  @media screen and (max-width: $tablet-width)
+    margin-right: 0
 
 .citylist
   list-style: none
@@ -52,6 +59,8 @@ export default {
       color: $citylist-item-color
       line-height: 24px
 
+      &:hover
+        color: $citylist-item-active-color
       &._active
         color: $citylist-item-active-color
         font-weight: 600

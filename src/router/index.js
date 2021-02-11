@@ -8,11 +8,11 @@ const routes = [
   {
     path: '/',
     name: 'Weather',
-    component: Weather
+    params: { city: 'sdsd' },
+    component: Weather,
   },
   {
     path: '/:city',
-    props: { obj: null },
     component: Weather
   }
 ]

@@ -11,7 +11,9 @@
     )
   //input(v-model="inputCity" placeholder="Enter city...")
   //button(@click="addNewCity") Add city
-  //button(@click="resetCities()") Reset
+  .reset
+    button(@click="resetCities()" class="reset__btn") Reset
+    span(class="reset__text" v-if="isReset") The city-list is reset!
 </template>
 
 <script>
@@ -25,7 +27,8 @@ export default {
   data() {
     return {
       inputCity: '',
-      error: ''
+      error: '',
+      isReset: false
     }
   },
   components: {
@@ -43,7 +46,10 @@ export default {
     },
     resetCities() {
       this.$store.dispatch('resetCities')
-      this.$router.push('/moscow')
+      this.isReset = true
+      setTimeout(() => {
+        this.isReset = false
+      }, 2000)
     },
     search(input) {
       const url = `http://api.weatherapi.com/v1/search.json?key=${API_KEY}&q=${encodeURI(input)}&limit=1`
@@ -69,5 +75,20 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import "~@/assets/vars.sass"
 
+.reset
+  margin-top: 8px
+  font-size: 14px
+
+  &__btn
+    background: 0
+    border: 0
+    outline: none
+    color: $reset-btn
+    cursor: pointer
+    padding: 0
+  &__text
+    margin-left: 12px
+    color: $reset-text
 </style>
