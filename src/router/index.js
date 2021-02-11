@@ -8,7 +8,6 @@ const routes = [
   {
     path: '/',
     name: 'Weather',
-    params: { city: 'sdsd' },
     component: Weather,
   },
   {
